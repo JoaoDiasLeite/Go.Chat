@@ -67,11 +67,13 @@ async function createOrLoginUser(username, name, email, password, ) {
         // Perfom login
         return await loginUser(username, password);
     } catch (ex) {
-        if (ex.statusCode === 400) {
+
+        if (ex.response.status === 401) {
             // User does not exist, creating user
             const user = await createUser(username, name, email, password);
             // Perfom login
-            return await loginUser(email, password);
+
+            return await loginUser(username, password);
         } else {
 
             throw ex;
