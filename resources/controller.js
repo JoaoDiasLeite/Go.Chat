@@ -3,9 +3,13 @@ var express = require('express');
 var session = require('express-session')
 const model = require('./model')
 
+async function getToken(req, res, next) {
+
+}
+
+
+
 async function login(req, res, next) {
-    // ....CODE TO LOGIN USER
-    // add your own app logic here to validate user session (check cookies, headers, etc)
     let validateParams = '';
     try {
         validateParams = await model.schema.validateAsync(req.body);
@@ -13,25 +17,30 @@ async function login(req, res, next) {
     } catch (error) {
         return next(error);
     }
-
     const username = validateParams.username;
     const password = validateParams.password;
     const email = validateParams.email;
     const firstName = validateParams.name;
-    // Creating or login user into Rocket chat 
+    // ....CODE TO LOGIN USER
     try {
+        const userOk = await method.checkUser(username, password, next);
+        // add your own app logic here to validate user session (check cookies, headers, etc)
+        // Creating or login user into Rocket chat 
+        try {
+            const response = await method.createOrLoginUser(username, firstName, email, password, next);
+            req.session.user = validateParams;
+            // Saving the rocket.chat auth token and userId in the database
+            req.session.user.rocketchatAuthToken = response.data.data.authToken;
+            req.session.user.rocketchatUserId = response.data.data.userId;
+            //await user.save();
+            //res.send({ message: 'Login Successful' }); //Uncomment to use as API request
+            res.redirect('/rocket_chat_iframe'); //Use with browser
+        } catch (ex) {
+            console.log('Rocket.chat login failed');
 
-        const response = await method.createOrLoginUser(username, firstName, email, password, next);
-        req.session.user = validateParams;
-        // Saving the rocket.chat auth token and userId in the database
-        req.session.user.rocketchatAuthToken = response.data.data.authToken;
-        req.session.user.rocketchatUserId = response.data.data.userId;
-        //await user.save();
-        //res.send({ message: 'Login Successful' }); //Uncomment to use as API request
-        res.redirect('/rocket_chat_iframe'); //Use with browser
-    } catch (ex) {
-        console.log('Rocket.chat login failed');
-        //console.log(ex);
+        }
+    } catch (error) {
+        console.log('User not found in External Service')
     }
 }
 /**
@@ -41,6 +50,7 @@ async function login(req, res, next) {
  * @returns login Token
  */
 async function getAuth(req, res) {
+
     if (req.session.user && req.session.user.rocketchatAuthToken) {
         res.send({ loginToken: ctx.session.user.rocketchatAuthToken })
         return;
@@ -75,6 +85,7 @@ function renderForm(req, res) {
     });
 
 }
+
 
 module.exports = {
     login,

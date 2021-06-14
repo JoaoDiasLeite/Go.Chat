@@ -6,7 +6,7 @@ router.get('/login', controller.renderForm);
 router.post('/login', controller.login);
 //Get Auth
 // This method will be called by Rocket.chat to fetch the login token
-router.get('/rocket_chat_auth_get', controller.getAuth);
+router.get('/rocket_chat_auth', controller.getAuth);
 //Get Iframe
 // This method will be called by Rocket.chat to fetch the login token
 // and is used as a fallback

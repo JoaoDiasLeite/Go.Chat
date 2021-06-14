@@ -3,6 +3,9 @@ const app = express();
 const session = require('express-session')
 const routes = require('./routes');
 const ErrorsHandler = require('./utils/error/errors-handler');
+
+
+
 const port = process.env.PORT || 8080;
 let session_key = process.env.SESSION_KEY;
 
@@ -18,6 +21,7 @@ app.use(session({
 }));
 
 app.use('/', routes);
+
 
 app.use(function(req, res) {
     const err = "404 Route Not Found";

@@ -6,6 +6,7 @@ require('dotenv').config();
 let auth_token = process.env.AUTH_TOKEN;
 let user_id = process.env.USER_ID;
 const rocketChatServer = 'http://localhost:3000';
+const externalServer = 'http://localhost:8081';
 const rocketChatAdminAuthToken = auth_token;
 const rocketChatAdminUserId = user_id;
 
@@ -53,7 +54,7 @@ async function createUser(username, name, email, password) {
 async function createOrLoginUser(username, name, email, password, next) {
     try {
         const user = await fetchUser(username);
-        //console.log(user.data.user.name)
+
         if (email === user.data.user.emails[0].address) {
             if (name === user.data.user.name) {
                 // Perfom login
@@ -70,9 +71,8 @@ async function createOrLoginUser(username, name, email, password, next) {
 
 
     } catch (ex) {
-        //console.log(ex)
-        //console.log(ex.response.status)
-        if (ex.response.status === 401) {
+
+        if (ex.response.data.error === 'User not found.') {
             // User does not exist, creating user
             const user = await createUser(username, name, email, password);
             // Perfom login
@@ -81,9 +81,22 @@ async function createOrLoginUser(username, name, email, password, next) {
         throw ex;
     }
 }
+
+async function checkUser(username, password, next) {
+    const externalUser = await axios.post(`${externalServer}/auth/token`, {
+        username,
+        password
+    })
+
+    return externalUser;
+};
+
+
 module.exports = {
     createOrLoginUser,
     fetchUser,
     loginUser,
-    createUser
+    createUser,
+    checkUser
+
 }
