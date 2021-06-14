@@ -13,9 +13,9 @@ Para criar o utilizador ou efetuar login o mesmo necessita de ser verificado de 
 -Instalar e correr RocketChat com a docuementação em https://confluence.go-contact.com/pages/viewpage.action?pageId=318210164 (Verificar RocketChat está a decorrer na Porta 3000);
 
 -Instalar e correr a Mock_App (API Externa), para isso é necessário: 
-    - Efetuar o download da aplicação;
-    - Na localização da aplicação correr o seguinte comando: `npm install`;
-    - Após instalar é necessário correr a aplicação com o seguinte comando: `npm start`;
+- Efetuar o download da aplicação;
+- Na localização da aplicação correr o seguinte comando: `npm install`;
+- Após instalar é necessário correr a aplicação com o seguinte comando: `npm start`;
 
 -Aceder ao RocketChat em http://localhost:3000 e cofigurar admin se ainda não estiver configurado;
 
