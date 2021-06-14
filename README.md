@@ -8,20 +8,20 @@ Para criar o utilizador ou efetuar login o mesmo necessita de ser verificado de 
 
 # Instalação e Configuração
 
-- Instalar NodeJS;
+-Instalar NodeJS;
 
-- Instalar e correr RocketChat com a docuementação em https://confluence.go-contact.com/pages/viewpage.action?pageId=318210164 (Verificar RocketChat está a decorrer na Porta 3000);
+-Instalar e correr RocketChat com a docuementação em https://confluence.go-contact.com/pages/viewpage.action?pageId=318210164 (Verificar RocketChat está a decorrer na Porta 3000);
 
-- Instalar e correr a Mock_App (API Externa), para isso é necessário: 
-    1.Efetuar o download da aplicação;
-    2.Na localização da aplicação correr o seguinte comando: `npm install`;
-    3.Após instalar é necessário correr a aplicação com o seguinte comando: `npm start`;
+-Instalar e correr a Mock_App (API Externa), para isso é necessário: 
+    - Efetuar o download da aplicação;
+    - Na localização da aplicação correr o seguinte comando: `npm install`;
+    - Após instalar é necessário correr a aplicação com o seguinte comando: `npm start`;
 
-- Aceder ao RocketChat em http://localhost:3000 e cofigurar admin se ainda não estiver configurado;
+-Aceder ao RocketChat em http://localhost:3000 e cofigurar admin se ainda não estiver configurado;
 
-- Fazer clone da aplicação Iframe;
+-Fazer clone da aplicação Iframe;
 
-- Instalar packages com `npm install`;
+-Instalar packages com `npm install`;
 
 # Inicialização
 
@@ -30,8 +30,8 @@ npm start
 ```
 # Rotas
 
-- Após a inicialização da aplicação é necessário aceder ao seguinte link: https://localhost:8080/login;
+-Após a inicialização da aplicação é necessário aceder ao seguinte link: https://localhost:8080/login;
 
-- Depois de aceder ao link é necessário fornecer os dados ou da conta criada previamente em Rocket.Chat, ou novos dados para criar uma conta em Rocket.Chat;
+-Depois de aceder ao link é necessário fornecer os dados ou da conta criada previamente em Rocket.Chat, ou novos dados para criar uma conta em Rocket.Chat;
 
-- Após os dados serem fornecidos a aplicação faz o login em Rocket.Chat e encaminha para o site.
+-Após os dados serem fornecidos a aplicação faz o login em Rocket.Chat e encaminha para o site.
