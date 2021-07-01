@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>Go.Chat Login</title>
-    <style>
+    <!-- <style>
         .login-form {
             width: 300px;
             margin: 0 auto;
@@ -37,20 +37,40 @@
             font-weight: bold;
             color: #ffffff;
         }
-    </style>
+    </style> -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="icon" type="image/x-icon " href="../views/favicon.ico" + Math.trunc(Math.random()*999)>
+
 </head>
 
 <body>
-    <div class="login-form">
-        <h1>Login To Rocket.Chat</h1>
-        <form method="POST">
-            <input type="text" name="name" placeholder="Name..." required>
-            <input type="text" name="username" placeholder="Username..." required>
-            <input type="text" name="email" placeholder="Email..." required>
-            <input type="password" name="password" placeholder="Password..." required>
-            <input type="submit">
-        </form>
+    <div class="container">
+        <div class="top"></div>
+        <div class="bottom"></div>
+        <div class="center">
+            <h2>Please Sign In</h2>
+            <form method="POST">
+                <input type="username" name="username" placeholder="Username..." required/>
+                <input type="password" name="password" placeholder="Password..." required/>
+                <input type="submit" value="Sign In">
+                <h2>&nbsp;</h2>
+            </form>
+        </div>
     </div>
+    <!--  <div class="login-form">
+        <h1>Login To Rocket.Chat
+            <span>
+                <img src="favicon.ico" width="16" height="16"></img>
+            </span>
+        </h1>
+        <form method="POST">
+             <input type="text" name="name" placeholder="Name..." required> 
+    <input type="text" name="username" placeholder="Username..." required>
+    <input type="text" name="email" placeholder="Email..." required>
+    <input type="password" name="password" placeholder="Password..." required>
+    
+    </form>
+    </div> -->
 </body>
 
 </html>

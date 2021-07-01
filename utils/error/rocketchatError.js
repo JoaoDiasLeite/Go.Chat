@@ -6,6 +6,9 @@ class rocketchatError {
     static badRequest(msg) {
         return new rocketchatError(400, msg);
     }
+    static unnauthorized(msg) {
+        return new validationError(401, msg)
+    }
     static notAcceptable(msg) {
         return new rocketchatError(406, msg);
     }

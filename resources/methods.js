@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { unnauthorized } = require('../utils/error/validationError');
 const validationError = require('../utils/error/validationError');
+const rocketchatError = require('../utils/error/rocketchatError');
 require('dotenv').config();
 
 let auth_token = process.env.AUTH_TOKEN;
@@ -26,12 +27,13 @@ async function fetchUser(username) {
 }
 
 async function loginUser(email, password) {
-    const response = await axios.post(`${rocketChatServer}/api/v1/login`, {
+    // const response =
+    return axios.post(`${rocketChatServer}/api/v1/login`, {
         user: email,
         password: password
     });
 
-    return response;
+    //return response;
 }
 
 async function createUser(username, name, email, password) {
@@ -60,43 +62,81 @@ async function createOrLoginUser(username, name, email, password, next) {
                 // Perfom login
                 return await loginUser(email, password);
             } else {
-                return next(validationError.unnauthorized("Name not associated to account"));
+                throw new validationError.unnauthorized("Name not associated to account");
             }
 
         } else {
-            return next(validationError.unnauthorized("Email not associated to account"));
+            throw new validationError.unnauthorized("Email not associated to account");
         }
-
-
-
-
     } catch (ex) {
-
         if (ex.response.data.error === 'User not found.') {
-            // User does not exist, creating user
-            const user = await createUser(username, name, email, password);
-            // Perfom login
-            return await loginUser(email, password);
+            try {
+                try {
+                    // User does not exist, creating user
+                    const user = await createUser(username, name, email, password);
+                } catch (error) {
+                    throw new rocketchatError(401, "Couldn't create account in Rocket.Chat")
+                }
+
+                // Perfom login
+                return await loginUser(email, password);
+            } catch (ex) {
+                throw ex;
+            }
         }
-        throw ex;
+        throw new rocketchatError(401, 'User Not Found');
     }
 }
 
-async function checkUser(username, password, next) {
+async function checkUser(username, password) {
+
     const externalUser = await axios.post(`${externalServer}/auth/token`, {
         username,
         password
     })
 
     return externalUser;
-};
 
+};
+async function listUser(username, next) {
+
+    const users_list = await axios({
+        method: 'get',
+        url: `${externalServer}/users`,
+
+    })
+
+    const users = users_list.data.data.users;
+    const count = Object.keys(users).length;
+
+    for (var i = 0; i < count; i++) {
+
+        if (users[i].username == username) {
+
+            const user_data = await axios({
+                method: 'get',
+                url: `${externalServer}/users/${i}`,
+            })
+            const user = user_data.data.data.user;
+            return user;
+        }
+
+    }
+}
+async function resumeAuth(token) {
+    return await axios.post(`${rocketChatServer}/api/v1/login`, {
+        resume: token
+    });
+}
 
 module.exports = {
     createOrLoginUser,
     fetchUser,
     loginUser,
     createUser,
-    checkUser
+    checkUser,
+    listUser,
+    resumeAuth,
+
 
 }

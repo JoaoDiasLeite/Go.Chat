@@ -3,7 +3,7 @@ const app = express();
 const session = require('express-session')
 const routes = require('./routes');
 const ErrorsHandler = require('./utils/error/errors-handler');
-
+var favicon = require('serve-favicon');
 
 
 const port = process.env.PORT || 8080;
@@ -14,6 +14,7 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+
 app.use(session({
     secret: session_key,
     resave: false,
@@ -21,8 +22,8 @@ app.use(session({
 }));
 
 app.use('/', routes);
-
-
+app.use(express.static('views'));
+app.use("/views", express.static('views'));
 app.use(function(req, res) {
     const err = "404 Route Not Found";
 
