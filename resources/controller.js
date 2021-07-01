@@ -10,14 +10,15 @@ const client = redis.createClient(REDIS_PORT);
 
 // Cache middleware
 async function cache(req, res, next) {
+    const utoken = await client.getAsync(username + 'token')
+    const uid = await client.getAsync(username + 'id')
     try {
         validateParams = await model.schema.validateAsync(req.body);
     } catch (error) {
         return next(validationError(400, 'Bad Request'));
     }
     const username = validateParams.username;
-    const utoken = await client.getAsync(username + 'token')
-    const uid = await client.getAsync(username + 'id')
+
     if (utoken && uid !== null) {
         try {
             const response = await method.resumeAuth(utoken);
