@@ -2,6 +2,7 @@ const axios = require('axios');
 const { unnauthorized } = require('../utils/error/validationError');
 const validationError = require('../utils/error/validationError');
 const rocketchatError = require('../utils/error/rocketchatError');
+const { response } = require('../app');
 require('dotenv').config();
 
 let auth_token = process.env.AUTH_TOKEN;
@@ -124,9 +125,11 @@ async function listUser(username, next) {
     }
 }
 async function resumeAuth(token) {
+
     return await axios.post(`${rocketChatServer}/api/v1/login`, {
         resume: token
-    });
+    })
+
 }
 
 module.exports = {

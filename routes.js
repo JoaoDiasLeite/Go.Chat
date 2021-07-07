@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const controller = require('./resources/controller')
 router.get('/api', controller.login);
-router.get('/login', controller.renderForm);
-router.post('/login', controller.cache);
+//router.get('/login', controller.renderForm);
+router.get('/login', controller.checkIfLoggedIn, controller.cache);
 //Get Auth
 // This method will be called by Rocket.chat to fetch the login token
 router.get('/rocket_chat_auth', controller.getAuth);

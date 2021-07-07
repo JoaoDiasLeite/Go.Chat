@@ -3,12 +3,11 @@ const app = express();
 const session = require('express-session')
 const routes = require('./routes');
 const ErrorsHandler = require('./utils/error/errors-handler');
-var favicon = require('serve-favicon');
+
 
 
 const port = process.env.PORT || 8080;
 let session_key = process.env.SESSION_KEY;
-
 
 app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: false }));
@@ -32,7 +31,7 @@ app.use(function(req, res) {
 
 app.use(ErrorsHandler);
 
-app.listen(port, function() {
+app.listen(port, "127.0.0.1", function() {
     console.log(`Running on port ${port}`);
 });
 

@@ -8,26 +8,38 @@ promisifyAll(redis);
 const REDIS_PORT = process.env.REDIS_PORT;
 const client = redis.createClient(REDIS_PORT);
 
+
+
+async function checkIfLoggedIn(req, res, next) {
+    req.body = { username: 'jleite', password: 'yota1234' };
+    next();
+}
 // Cache middleware
 async function cache(req, res, next) {
-    const utoken = await client.getAsync(username + 'token')
-    const uid = await client.getAsync(username + 'id')
+
     try {
         validateParams = await model.schema.validateAsync(req.body);
     } catch (error) {
         return next(validationError(400, 'Bad Request'));
     }
     const username = validateParams.username;
+    const token = await client.getAsync(username + 'token')
+    const id = await client.getAsync(username + 'id')
 
-    if (utoken && uid !== null) {
+
+
+    if (token && id !== null) {
+        const utoken = token.replace(/["]+/g, '');
+        const uid = id.replace(/["]+/g, '');
         try {
+
             const response = await method.resumeAuth(utoken);
             req.session.user = validateParams;
             // Saving the rocket.chat auth token and userId in the database 
-            const authtoken = token;
-            const uid = userId;
+            const authtoken = utoken;
+            const usid = uid;
             req.session.user.rocketchatAuthToken = authtoken;
-            req.session.user.rocketchatUserId = uid;
+            req.session.user.rocketchatUserId = usid;
             res.redirect('/rocket_chat_iframe');
         } catch (error) {
             if (error.response.data.status == 'error' && error.response.data.error == '403') {
@@ -135,6 +147,7 @@ async function getIframe(req, res) {
 }
 
 function renderForm(req, res) {
+    console.log(req.session)
     res.render('userform', {
         message: ''
     });
@@ -148,4 +161,5 @@ module.exports = {
     getIframe,
     renderForm,
     cache,
+    checkIfLoggedIn,
 }
