@@ -11,8 +11,14 @@ const client = redis.createClient(REDIS_PORT);
 
 
 async function checkIfLoggedIn(req, res, next) {
-    req.body = { username: 'jleite', password: 'yota1234' };
-    next();
+    const isLoggedIn = true;
+
+    if (isLoggedIn == true) {
+        req.body = { username: 'joao.leite', password: 'yota1234' };
+        next()
+    } else {
+        return next(new validationError(400, 'User Not Logged In'))
+    }
 }
 // Cache middleware
 async function cache(req, res, next) {
@@ -105,6 +111,63 @@ async function login(req, res, next) {
 
     }
 }
+
+/**
+ * Function used to validate user from external service and login or create user in Rocket.Chat
+ * @param {Object} req 
+ * @param {Object} res 
+ * @param {Function} next 
+ * @returns redirects page
+ */
+async function loginAPI(req, res, next) {
+    let validateParams = '';
+    try {
+        validateParams = await model.schema.validateAsync(req.body);
+
+    } catch (error) {
+
+        return next(validationError(400, 'Bad Request'));
+    }
+    const username = validateParams.username;
+    const password = validateParams.password;
+    // ....CODE TO LOGIN USER
+    try {
+        const userOk = await method.checkUser(username, password, next);
+        try {
+            const userData = await method.listUser(username, next);
+            // Creating or login user into Rocket chat 
+            try {
+                const response = await method.createOrLoginUser(username, userData.name, userData.email, password, next);
+                req.session.user = validateParams;
+                // Saving the rocket.chat auth token and userId in the database 
+                const authtoken = response.data.data.authToken;
+                const uid = response.data.data.userId
+                req.session.user.rocketchatAuthToken = authtoken;
+                req.session.user.rocketchatUserId = uid;
+                client.setex(username + 'token', 3600, JSON.stringify(authtoken))
+                client.setex(username + 'id', 3600, JSON.stringify(uid))
+                    //await user.save();
+                res.send({
+                    status: 'Login Successful',
+                    data: response
+                });
+            } catch (ex) {
+
+                next(new rocketchatError(401, "Rocket.Chat Login Failed"));
+            }
+
+        } catch (error) {
+            next(new validationError(500, 'Internal Server Error'))
+        }
+
+
+    } catch (error) {
+        next(new validationError(401, 'Invalid User Or Password'))
+
+    }
+}
+
+
 /**
  * This method will be called by Rocket.chat to fetch the login token
  * @param {Object} req 
@@ -162,4 +225,5 @@ module.exports = {
     renderForm,
     cache,
     checkIfLoggedIn,
+    loginAPI
 }

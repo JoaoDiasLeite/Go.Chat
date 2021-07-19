@@ -1,7 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const controller = require('./resources/controller')
-router.get('/api', controller.login);
+const swaggerUi = require('swagger-ui-express'),
+    swaggerDocument = require('./docs/swagger/swagger.json')
+
+//Login
+router.post('/ap_p', controller.loginAPI);
+router.get('/api_g', controller.checkIfLoggedIn, controller.loginAPI);
 //router.get('/login', controller.renderForm);
 router.get('/login', controller.checkIfLoggedIn, controller.cache);
 //Get Auth
@@ -11,7 +16,11 @@ router.get('/rocket_chat_auth', controller.getAuth);
 // This method will be called by Rocket.chat to fetch the login token
 // and is used as a fallback
 router.get('/rocket_chat_iframe', controller.getIframe)
-    //Login
 
-
+//Swagger
+router.use(
+    '/api-docs',
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerDocument)
+);
 module.exports = router;
